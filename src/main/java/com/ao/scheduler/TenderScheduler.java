@@ -2,6 +2,7 @@ package com.ao.scheduler;
 
 import com.ao.dto.TenderDto;
 import com.ao.entity.Tender;
+import com.ao.service.ScraperJobService;
 import com.ao.service.ScraperService;
 import com.ao.service.TenderService;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,21 @@ import java.util.List;
 @Slf4j
 public class TenderScheduler {
 
-    private final ScraperService scraper;
-    private final TenderService tenderService;
+    //private final ScraperService scraper;
+    //private final TenderService tenderService;
+    private final ScraperJobService scraperJobService;
 
     //@Scheduled(cron = "0 0 */6 * * *") // toutes les 6h
     @Scheduled(fixedDelay = 30_000)
     public void collectTenders() {
         log.info("SCRAPPING STARTED");
-        try {
+        /*try {
             List<TenderDto> dtos = scraper.fetchLatest();
             tenderService.saveIfNew(dtos);
         } catch (Exception e) {
             log.error("Erreur collecte AO", e);
-        }
+        }*/
+        scraperJobService.run();
         log.info("SCRAPPING ENDED");
     }
 }

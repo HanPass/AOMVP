@@ -22,9 +22,9 @@ public class NewTenderEventListener {
         log.info("Event reçu – {} nouveaux AO", count);
 
         //TODO
-        /*emailService.sendAlert(
+        emailService.sendAlert(
                 "📢 Nouveaux appels d’offres détectés",
                 "🚀 " + count + " nouveaux appels d’offres ont été ajoutés."
-        );*/
+        );
     }
 }
