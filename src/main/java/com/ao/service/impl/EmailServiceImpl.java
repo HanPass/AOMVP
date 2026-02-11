@@ -5,11 +5,9 @@ import com.ao.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +25,15 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.alert.mail.subject-prefix:[AO]}")
     private String subjectPrefix;
 
-    private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-
     @Override
     public void sendAlert(String subject, String body) {
         log.info("EMAIL START");
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("jamaleddine.reda@gmail.com");
-        message.setSubject(subject);
+        message.setTo(mailTo);
+        if (mailFrom != null && !mailFrom.isBlank()) {
+            message.setFrom(mailFrom);
+        }
+        message.setSubject(subjectPrefix + " " + subject);
         message.setText(body);
 
         mailSender.send(message);
@@ -74,7 +72,4 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    private String safe(String s) {
-        return (s == null || s.isBlank()) ? "-" : s.trim();
-    }
 }
