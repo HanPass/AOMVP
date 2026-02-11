@@ -52,24 +52,3 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ## Endpoint principal
 
 - `GET /api/v1/appel-offre/all` : retourne les AO persistés.
-
-### Exemple de réponse
-
-```json
-[
-  {
-    "reference": "AO-2026-001",
-    "objet": "Travaux d'entretien",
-    "organisme": "Commune X",
-    "lieuExec": "Rabat",
-    "datePublication": "2026-01-10",
-    "dateLimite": "2026-02-10T10:00:00",
-    "urlDetail": "https://www.marchespublics.gov.ma/..."
-  }
-]
-```
-
-## Notes d'exploitation
-
-- Le pipeline actif est : `fetchAll()` → `enrich()` → `ingestIfNew()`.
-- L'envoi réel des mails est volontairement désactivé pour le moment dans `EmailServiceImpl`.
