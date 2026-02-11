@@ -45,7 +45,10 @@ public class EmailServiceImpl implements EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(mailTo);
-            message.setSubject("🆕 Nouvel appel d’offre – " + ao.getReference());
+            if (mailFrom != null && !mailFrom.isBlank()) {
+                message.setFrom(mailFrom);
+            }
+            message.setSubject(subjectPrefix + " 🆕 Nouvel appel d’offre – " + ao.getReference());
             message.setText("""
                 Nouvel appel d’offre détecté
 
@@ -65,7 +68,7 @@ public class EmailServiceImpl implements EmailService {
             ));
 
             //mailSender.send(message);
-            log.info("📧 Mail envoyé pour {}", ao.getReference());
+            log.info("📧 Mail préparé pour {}", ao.getReference());
 
         } catch (Exception e) {
             log.error("❌ Erreur envoi mail {}", ao.getReference(), e);
