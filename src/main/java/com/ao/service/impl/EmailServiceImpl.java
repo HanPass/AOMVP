@@ -26,6 +26,21 @@ public class EmailServiceImpl implements EmailService {
     private String subjectPrefix;
 
     @Override
+    public void sendAlert(String subject, String body) {
+        log.info("EMAIL START");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(mailTo);
+        if (mailFrom != null && !mailFrom.isBlank()) {
+            message.setFrom(mailFrom);
+        }
+        message.setSubject(subjectPrefix + " " + subject);
+        message.setText(body);
+
+        mailSender.send(message);
+        log.info("EMAIL END");
+    }
+
+    @Override
     public void sendAlert(AppelOffre ao) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -59,4 +74,5 @@ public class EmailServiceImpl implements EmailService {
             log.error("❌ Erreur envoi mail {}", ao.getReference(), e);
         }
     }
+
 }
