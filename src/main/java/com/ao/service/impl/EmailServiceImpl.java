@@ -16,9 +16,6 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${app.alert.mail.to}")
-    private String mailTo;
-
     @Value("${app.alert.mail.from:${spring.mail.username:}}")
     private String mailFrom;
 
@@ -71,7 +68,7 @@ public class EmailServiceImpl implements EmailService {
             log.info("📧 Mail préparé pour {}", ao.getReference());
 
         } catch (Exception e) {
-            log.error("❌ Erreur envoi mail {}", ao.getReference(), e);
+            log.error("❌ Erreur envoi mail {} vers {}", ao.getReference(), recipientEmail, e);
         }
     }
 
