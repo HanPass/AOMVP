@@ -1,11 +1,7 @@
 package com.ao.service;
 
 import com.ao.dto.AppelOffre;
-import com.ao.entity.Tender;
-
-import java.util.List;
 
 public interface EmailService {
-    void sendAlert(String subject, String body);
     void sendAlert(AppelOffre ao);
 }
