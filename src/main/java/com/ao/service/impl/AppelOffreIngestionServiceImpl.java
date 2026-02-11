@@ -1,15 +1,18 @@
 package com.ao.service.impl;
 
 import com.ao.dto.AppelOffre;
-import com.ao.repository.AppelOffreRepository;
 import com.ao.mapper.AppelOffreMapper;
+import com.ao.repository.AppelOffreRepository;
 import com.ao.service.AppelOffreIngestionService;
 import com.ao.service.EmailService;
+import com.ao.service.NotificationPreferenceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,9 +21,10 @@ public class AppelOffreIngestionServiceImpl implements AppelOffreIngestionServic
 
     private final AppelOffreRepository repository;
     private final EmailService emailService;
+    private final NotificationPreferenceService notificationPreferenceService;
 
     /**
-     * Retourne true si nouvelle AO (mail envoyé), false si déjà connue.
+     * Retourne true si nouvelle AO (mail préparé/éventuellement envoyé), false si déjà connue.
      */
     @Transactional
     public boolean ingestIfNew(AppelOffre ao) {
@@ -36,9 +40,15 @@ public class AppelOffreIngestionServiceImpl implements AppelOffreIngestionServic
 
         try {
             repository.save(AppelOffreMapper.toEntity(ao));
-
             log.info("🆕 Nouvelle AO détectée [{}] {}", ao.getReference(), ao.getObjet());
-            emailService.sendAlert(ao);
+
+            List<String> recipients = notificationPreferenceService.findMatchingRecipientEmails(ao);
+            if (recipients.isEmpty()) {
+                log.info("Aucun destinataire correspondant aux préférences pour {}", ao.getReference());
+            } else {
+                recipients.forEach(recipient -> emailService.sendAlert(ao, recipient));
+                log.info("Notification traitée pour {} destinataire(s) sur {}", recipients.size(), ao.getReference());
+            }
 
             return true;
         } catch (DataIntegrityViolationException e) {
@@ -48,4 +58,3 @@ public class AppelOffreIngestionServiceImpl implements AppelOffreIngestionServic
         }
     }
 }
-
