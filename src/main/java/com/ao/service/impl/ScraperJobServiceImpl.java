@@ -7,6 +7,7 @@ import com.ao.service.ScraperJobService;
 import com.ao.service.ScraperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public class ScraperJobServiceImpl implements ScraperJobService {
     private final ScraperService listService;
     private final ScraperDetailService detailService;
     private final AppelOffreIngestionService ingestionService;
+
+    @Value("${app.scraper.max-items-per-run:100}")
+    private int maxItemsPerRun;
 
     public void run() {
         log.info("🚀 Lancement scraper AO");

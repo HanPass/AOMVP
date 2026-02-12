@@ -14,7 +14,7 @@ public class TenderScheduler {
     private final ScraperJobService scraperJobService;
 
     //@Scheduled(cron = "0 0 */6 * * *") // toutes les 6h
-    @Scheduled(fixedDelay = 30_000)
+    @Scheduled(fixedDelayString = "${app.scraper.fixed-delay-ms:30000}")
     public void collectTenders() {
         log.info("SCRAPPING STARTED");
         scraperJobService.run();
