@@ -23,10 +23,9 @@ public class AppelOffreIngestionServiceImpl implements AppelOffreIngestionServic
     private final AppelOffreRepository repository;
     private final EmailService emailService;
     private final NotificationPreferenceService notificationPreferenceService;
-    private final AppelOffreQualityService qualityService;
 
     /**
-     * Retourne true si nouvelle AO (mail préparé/éventuellement envoyé), false si déjà connue/invalide.
+     * Retourne true si nouvelle AO (mail préparé/éventuellement envoyé), false si déjà connue.
      */
     @Transactional
     public boolean ingestIfNew(AppelOffre ao) {
@@ -44,15 +43,15 @@ public class AppelOffreIngestionServiceImpl implements AppelOffreIngestionServic
         }
 
         try {
-            repository.save(AppelOffreMapper.toEntity(normalized));
-            log.info("🆕 Nouvelle AO détectée [{}] {}", normalized.getReference(), normalized.getObjet());
+            repository.save(AppelOffreMapper.toEntity(ao));
+            log.info("🆕 Nouvelle AO détectée [{}] {}", ao.getReference(), ao.getObjet());
 
-            List<String> recipients = notificationPreferenceService.findMatchingRecipientEmails(normalized);
+            List<String> recipients = notificationPreferenceService.findMatchingRecipientEmails(ao);
             if (recipients.isEmpty()) {
-                log.info("Aucun destinataire correspondant aux préférences pour {}", normalized.getReference());
+                log.info("Aucun destinataire correspondant aux préférences pour {}", ao.getReference());
             } else {
-                recipients.forEach(recipient -> emailService.sendAlert(normalized, recipient));
-                log.info("Notification traitée pour {} destinataire(s) sur {}", recipients.size(), normalized.getReference());
+                recipients.forEach(recipient -> emailService.sendAlert(ao, recipient));
+                log.info("Notification traitée pour {} destinataire(s) sur {}", recipients.size(), ao.getReference());
             }
 
             return true;

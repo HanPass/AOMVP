@@ -1,9 +1,7 @@
 package com.ao.service.impl;
 
 import com.ao.dto.AppelOffre;
-import com.ao.service.AppelOffreQualityService;
 import com.ao.service.ScraperService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,11 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class ScraperServiceImpl implements ScraperService {
-
-    private final AppelOffreQualityService qualityService;
 
     private static final String LIST_URL =
             "https://www.marchespublics.gov.ma/index.php?page=entreprise.EntrepriseAdvancedSearch&AllCons&statut=publie";
@@ -50,12 +45,9 @@ public class ScraperServiceImpl implements ScraperService {
             log.info("📄 AO détectées: {}", rows.size());
 
             for (Element row : rows) {
-                AppelOffre parsed = parseRow(row);
-                var quality = qualityService.normalizeAndValidate(parsed);
-
-                if (!quality.isValid()) {
-                    log.debug("AO ignorée après contrôle qualité: {}", quality.issues());
-                    continue;
+                AppelOffre ao = parseRow(row);
+                if (ao != null && ao.getReference() != null && !ao.getReference().isBlank()) {
+                    results.add(ao);
                 }
 
                 results.add(quality.normalized());

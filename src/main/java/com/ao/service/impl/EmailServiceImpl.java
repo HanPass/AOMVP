@@ -22,14 +22,26 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.alert.mail.subject-prefix:[AO]}")
     private String subjectPrefix;
 
-    @Value("${app.alert.mail.enabled:false}")
-    private boolean mailEnabled;
+    @Override
+    public void sendAlert(String subject, String body) {
+        log.info("EMAIL START");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(mailTo);
+        if (mailFrom != null && !mailFrom.isBlank()) {
+            message.setFrom(mailFrom);
+        }
+        message.setSubject(subjectPrefix + " " + subject);
+        message.setText(body);
+
+        mailSender.send(message);
+        log.info("EMAIL END");
+    }
 
     @Override
-    public void sendAlert(AppelOffre ao, String recipientEmail) {
+    public void sendAlert(AppelOffre ao) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(recipientEmail);
+            message.setTo(mailTo);
             if (mailFrom != null && !mailFrom.isBlank()) {
                 message.setFrom(mailFrom);
             }
@@ -52,16 +64,12 @@ public class EmailServiceImpl implements EmailService {
                     ao.getUrlDetail()
             ));
 
-            if (!mailEnabled) {
-                log.info("📧 [DISABLED] Mail préparé pour {} ({})", ao.getReference(), recipientEmail);
-                return;
-            }
-
-            mailSender.send(message);
-            log.info("📧 Mail envoyé pour {} ({})", ao.getReference(), recipientEmail);
+            //mailSender.send(message);
+            log.info("📧 Mail préparé pour {}", ao.getReference());
 
         } catch (Exception e) {
             log.error("❌ Erreur envoi mail {} vers {}", ao.getReference(), recipientEmail, e);
         }
     }
+
 }

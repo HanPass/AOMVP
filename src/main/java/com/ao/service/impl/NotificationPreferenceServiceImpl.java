@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +29,6 @@ public class NotificationPreferenceServiceImpl implements NotificationPreference
                 .filter(pref -> matches(pref, ao))
                 .map(NotificationPreferenceEntity::getEmail)
                 .filter(email -> email != null && !email.isBlank())
-                .map(String::trim)
                 .distinct()
                 .toList();
     }
@@ -47,20 +45,20 @@ public class NotificationPreferenceServiceImpl implements NotificationPreference
         return keywordOk && regionOk && organismeOk;
     }
 
-    private boolean matchAnyToken(String rawTokens, String sourceText) {
-        List<String> tokens = tokenize(rawTokens);
+    private boolean matchAnyToken(String csvTokens, String sourceText) {
+        List<String> tokens = tokenize(csvTokens);
         if (tokens.isEmpty()) {
             return true;
         }
         return tokens.stream().anyMatch(sourceText::contains);
     }
 
-    private List<String> tokenize(String rawTokens) {
-        if (rawTokens == null || rawTokens.isBlank()) {
+    private List<String> tokenize(String csv) {
+        if (csv == null || csv.isBlank()) {
             return List.of();
         }
 
-        return Arrays.stream(rawTokens.split("[,;\\n\\r]"))
+        return Arrays.stream(csv.split(","))
                 .map(this::normalize)
                 .filter(s -> !s.isBlank())
                 .toList();
@@ -70,16 +68,6 @@ public class NotificationPreferenceServiceImpl implements NotificationPreference
         if (value == null) {
             return "";
         }
-
-        String noAccent = Normalizer
-                .normalize(value, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}+", "");
-
-        String normalizedSpaces = noAccent
-                .toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9]+", " ")
-                .trim();
-
-        return normalizedSpaces;
+        return value.toLowerCase(Locale.ROOT).trim();
     }
 }
