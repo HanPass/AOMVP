@@ -4,6 +4,7 @@ import com.ao.dto.AppelOffre;
 import com.ao.mapper.AppelOffreMapper;
 import com.ao.repository.AppelOffreRepository;
 import com.ao.service.AppelOffreIngestionService;
+import com.ao.service.AppelOffreQualityService;
 import com.ao.service.EmailService;
 import com.ao.service.NotificationPreferenceService;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +29,16 @@ public class AppelOffreIngestionServiceImpl implements AppelOffreIngestionServic
      */
     @Transactional
     public boolean ingestIfNew(AppelOffre ao) {
-        if (ao == null || ao.getReference() == null || ao.getReference().isBlank()) {
-            log.warn("AO ignorée (référence vide): {}", ao);
+        var quality = qualityService.normalizeAndValidate(ao);
+        if (!quality.isValid()) {
+            log.warn("AO ignorée (qualité insuffisante): {}", quality.issues());
             return false;
         }
 
-        if (repository.existsByReference(ao.getReference())) {
-            log.debug("AO déjà connue: {}", ao.getReference());
+        AppelOffre normalized = quality.normalized();
+
+        if (repository.existsByReference(normalized.getReference())) {
+            log.debug("AO déjà connue: {}", normalized.getReference());
             return false;
         }
 
@@ -53,7 +57,7 @@ public class AppelOffreIngestionServiceImpl implements AppelOffreIngestionServic
             return true;
         } catch (DataIntegrityViolationException e) {
             // sécurité si 2 threads/process insèrent en même temps
-            log.info("AO déjà insérée (race condition) {}", ao.getReference());
+            log.info("AO déjà insérée (race condition) {}", normalized.getReference());
             return false;
         }
     }

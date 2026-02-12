@@ -49,6 +49,8 @@ public class ScraperServiceImpl implements ScraperService {
                 if (ao != null && ao.getReference() != null && !ao.getReference().isBlank()) {
                     results.add(ao);
                 }
+
+                results.add(quality.normalized());
             }
 
         } catch (Exception e) {
