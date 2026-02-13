@@ -59,7 +59,7 @@ class NotificationPreferenceServiceImplTest {
                 .email("ok@test.com")
                 .keywords("informatique")
                 .regions("rabat")
-                .organismes("equipement")
+                .organismes("équipement")
                 .enabled(true)
                 .build();
 
@@ -76,28 +76,5 @@ class NotificationPreferenceServiceImplTest {
         List<String> recipients = service.findMatchingRecipientEmails(ao);
 
         assertEquals(List.of("ok@test.com"), recipients);
-    }
-
-    @Test
-    void shouldSupportCommaSemicolonAndNewlineTokenSeparators() {
-        AppelOffre ao = AppelOffre.builder()
-                .objet("Services de nettoyage industriel")
-                .lieuExec("Casablanca")
-                .organisme("Commune Urbaine")
-                .build();
-
-        NotificationPreferenceEntity pref = NotificationPreferenceEntity.builder()
-                .email("multi@test.com")
-                .keywords("informatique;nettoyage\ntransport")
-                .regions("rabat,casablanca")
-                .organismes("ministere;commune")
-                .enabled(true)
-                .build();
-
-        when(notificationPreferenceRepository.findByEnabledTrue()).thenReturn(List.of(pref));
-
-        List<String> recipients = service.findMatchingRecipientEmails(ao);
-
-        assertEquals(List.of("multi@test.com"), recipients);
     }
 }

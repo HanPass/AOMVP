@@ -27,7 +27,6 @@ public class ScraperJobServiceImpl implements ScraperJobService {
         log.info("🚀 Lancement scraper AO");
 
         int fetched = 0;
-        int processed = 0;
         int enriched = 0;
         int inserted = 0;
         int errors = 0;
@@ -36,12 +35,6 @@ public class ScraperJobServiceImpl implements ScraperJobService {
         fetched = list.size();
 
         for (AppelOffre aoLight : list) {
-            if (processed >= maxItemsPerRun) {
-                log.info("Limite de traitement atteinte: {} AO max par run", maxItemsPerRun);
-                break;
-            }
-
-            processed++;
             try {
                 AppelOffre ao = detailService.enrich(aoLight);
                 enriched++;
@@ -56,9 +49,8 @@ public class ScraperJobServiceImpl implements ScraperJobService {
 
         int duplicatesOrIgnored = Math.max(0, enriched - inserted);
         log.info(
-                "🏁 Fin scraper AO - fetched={}, processed={}, enriched={}, inserted={}, duplicates_or_ignored={}, errors={}",
+                "🏁 Fin scraper AO - fetched={}, enriched={}, inserted={}, duplicates_or_ignored={}, errors={}",
                 fetched,
-                processed,
                 enriched,
                 inserted,
                 duplicatesOrIgnored,
