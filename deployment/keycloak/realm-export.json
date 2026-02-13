@@ -1,0 +1,109 @@
+{
+  "realm": "ao-mvp",
+  "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "rememberMe": true,
+  "verifyEmail": true,
+  "resetPasswordAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "roles": {
+    "realm": [
+      { "name": "USER" },
+      { "name": "ANALYST" },
+      { "name": "ADMIN" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "ao-mvp-api",
+      "name": "AOMVP API",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:8080/*",
+        "http://localhost:8081/*"
+      ],
+      "webOrigins": ["*"],
+      "defaultClientScopes": ["profile", "email", "roles"],
+      "optionalClientScopes": ["address", "phone", "offline_access", "microprofile-jwt"]
+    }
+  ],
+  "requiredActions": [
+    {
+      "alias": "VERIFY_EMAIL",
+      "name": "Verify email",
+      "enabled": true,
+      "defaultAction": true,
+      "priority": 10,
+      "providerId": "VERIFY_EMAIL"
+    },
+    {
+      "alias": "UPDATE_PASSWORD",
+      "name": "Update password",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 20,
+      "providerId": "UPDATE_PASSWORD"
+    },
+    {
+      "alias": "terms_and_conditions",
+      "name": "Terms and Conditions",
+      "enabled": true,
+      "defaultAction": true,
+      "priority": 30,
+      "providerId": "terms_and_conditions"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin@aomvp.local",
+      "enabled": true,
+      "email": "admin@aomvp.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["ADMIN", "ANALYST", "USER"]
+    },
+    {
+      "username": "analyst@aomvp.local",
+      "enabled": true,
+      "email": "analyst@aomvp.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Analyst123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["ANALYST", "USER"]
+    },
+    {
+      "username": "user@aomvp.local",
+      "enabled": true,
+      "email": "user@aomvp.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "User123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["USER"]
+    }
+  ]
+}
