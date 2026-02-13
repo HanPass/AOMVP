@@ -3,6 +3,7 @@ package com.ao.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,7 +29,6 @@ public class AppelOffreEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Clé métier (unique)
     @Column(name = "reference", nullable = false, length = 100)
     private String reference;
 
@@ -37,6 +37,15 @@ public class AppelOffreEntity {
 
     @Column(name = "lieu_exec", length = 255)
     private String lieuExec;
+
+    @Column(name = "domaine", length = 255)
+    private String domaine;
+
+    @Column(name = "type_marche", length = 100)
+    private String typeMarche;
+
+    @Column(name = "budget_estime", precision = 15, scale = 2)
+    private BigDecimal budgetEstime;
 
     @Column(name = "objet", columnDefinition = "TEXT")
     private String objet;
