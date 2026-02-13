@@ -20,7 +20,7 @@ public class NotificationPreferenceAdminServiceImpl implements NotificationPrefe
     @Override
     @Transactional
     public NotificationPreferenceResponse upsert(NotificationPreferenceRequest request) {
-        NotificationPreferenceEntity entity = notificationPreferenceRepository.findByEmail(request.email().trim())
+        NotificationPreferenceEntity entity = notificationPreferenceRepository.findByEmail(request.email())
                 .orElseGet(NotificationPreferenceEntity::new);
 
         entity.setEmail(request.email().trim());
@@ -39,17 +39,6 @@ public class NotificationPreferenceAdminServiceImpl implements NotificationPrefe
         return notificationPreferenceRepository.findAll().stream()
                 .map(this::toResponse)
                 .toList();
-    }
-
-    @Override
-    @Transactional
-    public boolean deleteById(Long id) {
-        if (id == null || !notificationPreferenceRepository.existsById(id)) {
-            return false;
-        }
-
-        notificationPreferenceRepository.deleteById(id);
-        return true;
     }
 
     private NotificationPreferenceResponse toResponse(NotificationPreferenceEntity entity) {
