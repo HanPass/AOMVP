@@ -21,7 +21,7 @@ public class ScraperJobServiceImpl implements ScraperJobService {
     private final AppelOffreIngestionService ingestionService;
 
     @Value("${app.scraper.max-items-per-run:100}")
-    private int maxItemsPerRun;
+    private int maxItemsPerRun = 100;
 
     public void run() {
         log.info("🚀 Lancement scraper AO");

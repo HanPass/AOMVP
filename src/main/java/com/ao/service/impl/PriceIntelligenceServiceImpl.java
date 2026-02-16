@@ -27,33 +27,46 @@ public class PriceIntelligenceServiceImpl implements PriceIntelligenceService {
     public PriceEstimateResponse estimate(PriceEstimateRequest request) {
         List<String> features = new ArrayList<>();
 
+        if (hasText(request.getDomaine())) {
+            features.add("domaine");
+        }
+        if (hasText(request.getTypeMarche())) {
+            features.add("typeMarche");
+        }
+        if (hasText(request.getRegion())) {
+            features.add("region");
+        }
+        if (hasText(request.getOrganisme())) {
+            features.add("organisme");
+        }
+        if (request.getPublicationFrom() != null) {
+            features.add("publicationFrom");
+        }
+        if (request.getPublicationTo() != null) {
+            features.add("publicationTo");
+        }
+
         Specification<AppelOffreEntity> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.isNotNull(root.get("budgetEstime")));
 
             if (hasText(request.getDomaine())) {
                 predicates.add(cb.like(cb.lower(root.get("domaine")), like(request.getDomaine())));
-                features.add("domaine");
             }
             if (hasText(request.getTypeMarche())) {
                 predicates.add(cb.like(cb.lower(root.get("typeMarche")), like(request.getTypeMarche())));
-                features.add("typeMarche");
             }
             if (hasText(request.getRegion())) {
                 predicates.add(cb.like(cb.lower(root.get("lieuExec")), like(request.getRegion())));
-                features.add("region");
             }
             if (hasText(request.getOrganisme())) {
                 predicates.add(cb.like(cb.lower(root.get("organisme")), like(request.getOrganisme())));
-                features.add("organisme");
             }
             if (request.getPublicationFrom() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("datePublication"), request.getPublicationFrom()));
-                features.add("publicationFrom");
             }
             if (request.getPublicationTo() != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("datePublication"), request.getPublicationTo()));
-                features.add("publicationTo");
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
