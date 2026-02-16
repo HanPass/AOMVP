@@ -1,6 +1,18 @@
 version: '3.9'
 
 services:
+  app-db:
+    image: postgres:16-alpine
+    container_name: aomvp-db
+    environment:
+      POSTGRES_DB: ao_mvp
+      POSTGRES_USER: ao_mvp
+      POSTGRES_PASSWORD: ao_mvp
+    ports:
+      - "5432:5432"
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+
   keycloak-db:
     image: postgres:16-alpine
     container_name: keycloak-db
@@ -32,4 +44,5 @@ services:
       - keycloak-db
 
 volumes:
+  app-db-data:
   keycloak-db-data:
