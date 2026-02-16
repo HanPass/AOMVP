@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -65,5 +66,22 @@ class ScraperJobServiceImplTest {
         verify(ingestionService, times(1)).ingestIfNew(ao2);
         verify(ingestionService, times(0)).ingestIfNew(ao1);
         verify(ingestionService, times(1)).ingestIfNew(any());
+    }
+
+    @Test
+    void shouldRespectMaxItemsPerRunLimit() {
+        ReflectionTestUtils.setField(service, "maxItemsPerRun", 1);
+
+        AppelOffre ao1 = AppelOffre.builder().reference("AO-1").build();
+        AppelOffre ao2 = AppelOffre.builder().reference("AO-2").build();
+
+        when(listService.fetchAll()).thenReturn(List.of(ao1, ao2));
+        when(detailService.enrich(ao1)).thenReturn(ao1);
+
+        service.run();
+
+        verify(detailService, times(1)).enrich(ao1);
+        verify(detailService, times(0)).enrich(ao2);
+        verify(ingestionService, times(1)).ingestIfNew(ao1);
     }
 }

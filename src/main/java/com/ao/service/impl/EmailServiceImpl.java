@@ -22,6 +22,16 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.alert.mail.subject-prefix:[AO]}")
     private String subjectPrefix;
 
+<<<<<<< codex/review-application-development-progress-k3ptly
+    @Value("${app.alert.mail.enabled:false}")
+    private boolean mailEnabled;
+
+    @Override
+    public void sendAlert(AppelOffre ao, String recipientEmail) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(recipientEmail);
+=======
     @Override
     public void sendAlert(String subject, String body) {
         log.info("EMAIL START");
@@ -42,6 +52,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(mailTo);
+>>>>>>> main
             if (mailFrom != null && !mailFrom.isBlank()) {
                 message.setFrom(mailFrom);
             }
@@ -64,12 +75,25 @@ public class EmailServiceImpl implements EmailService {
                     ao.getUrlDetail()
             ));
 
+<<<<<<< codex/review-application-development-progress-k3ptly
+            if (!mailEnabled) {
+                log.info("📧 [DISABLED] Mail préparé pour {} ({})", ao.getReference(), recipientEmail);
+                return;
+            }
+
+            mailSender.send(message);
+            log.info("📧 Mail envoyé pour {} ({})", ao.getReference(), recipientEmail);
+=======
             //mailSender.send(message);
             log.info("📧 Mail préparé pour {}", ao.getReference());
+>>>>>>> main
 
         } catch (Exception e) {
             log.error("❌ Erreur envoi mail {} vers {}", ao.getReference(), recipientEmail, e);
         }
     }
+<<<<<<< codex/review-application-development-progress-k3ptly
+=======
 
+>>>>>>> main
 }

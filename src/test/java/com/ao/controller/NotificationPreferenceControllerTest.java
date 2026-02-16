@@ -56,4 +56,24 @@ class NotificationPreferenceControllerTest {
         assertEquals(saved, response.getBody());
         verify(adminService).upsert(request);
     }
+
+    @Test
+    void shouldReturnNoContentWhenDeleteSucceeded() {
+        when(adminService.deleteById(10L)).thenReturn(true);
+
+        ResponseEntity<Void> response = controller.deleteById(10L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(adminService).deleteById(10L);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeleteMissing() {
+        when(adminService.deleteById(10L)).thenReturn(false);
+
+        ResponseEntity<Void> response = controller.deleteById(10L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(adminService).deleteById(10L);
+    }
 }

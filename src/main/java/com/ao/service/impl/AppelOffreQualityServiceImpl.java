@@ -5,6 +5,7 @@ import com.ao.service.AppelOffreQualityService;
 import com.ao.service.impl.quality.AppelOffreQualityResult;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class AppelOffreQualityServiceImpl implements AppelOffreQualityService {
                 .objet(normalizeText(ao.getObjet()))
                 .organisme(normalizeText(ao.getOrganisme()))
                 .lieuExec(normalizeText(ao.getLieuExec()))
+                .domaine(normalizeText(ao.getDomaine()))
+                .typeMarche(normalizeText(ao.getTypeMarche()))
+                .budgetEstime(normalizeBudget(ao.getBudgetEstime()))
                 .datePublication(ao.getDatePublication())
                 .dateLimite(ao.getDateLimite())
                 .urlDetail(normalizeUrl(ao.getUrlDetail()))
@@ -39,6 +43,10 @@ public class AppelOffreQualityServiceImpl implements AppelOffreQualityService {
             issues.add("URL_DETAIL_EMPTY");
         } else if (!normalized.getUrlDetail().startsWith("http")) {
             issues.add("URL_DETAIL_INVALID");
+        }
+
+        if (normalized.getBudgetEstime() != null && normalized.getBudgetEstime().compareTo(BigDecimal.ZERO) < 0) {
+            issues.add("BUDGET_NEGATIVE");
         }
 
         if (normalized.getDatePublication() != null && normalized.getDateLimite() != null
@@ -68,6 +76,13 @@ public class AppelOffreQualityServiceImpl implements AppelOffreQualityService {
             return "";
         }
         return value.trim();
+    }
+
+    private BigDecimal normalizeBudget(BigDecimal value) {
+        if (value == null) {
+            return null;
+        }
+        return value.stripTrailingZeros();
     }
 
     private boolean isBlank(String value) {

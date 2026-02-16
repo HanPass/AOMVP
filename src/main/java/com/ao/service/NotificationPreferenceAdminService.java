@@ -9,4 +9,6 @@ public interface NotificationPreferenceAdminService {
     NotificationPreferenceResponse upsert(NotificationPreferenceRequest request);
 
     List<NotificationPreferenceResponse> findAll();
+
+    boolean deleteById(Long id);
 }

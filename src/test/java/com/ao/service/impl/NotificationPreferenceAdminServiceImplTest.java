@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +32,7 @@ class NotificationPreferenceAdminServiceImplTest {
     @Test
     void shouldCreatePreferenceWhenEmailNotExisting() {
         NotificationPreferenceRequest request = new NotificationPreferenceRequest(
-                "user@test.com", true, "informatique", "rabat", "ministère"
+                " user@test.com ", true, "informatique", "rabat", "ministère"
         );
 
         NotificationPreferenceEntity saved = NotificationPreferenceEntity.builder()
@@ -48,7 +51,7 @@ class NotificationPreferenceAdminServiceImplTest {
 
         assertEquals(1L, response.id());
         assertEquals("user@test.com", response.email());
-        assertEquals(true, response.enabled());
+        assertTrue(response.enabled());
     }
 
     @Test
@@ -63,5 +66,24 @@ class NotificationPreferenceAdminServiceImplTest {
         assertEquals(2, responses.size());
         assertEquals("a@test.com", responses.get(0).email());
         assertEquals("b@test.com", responses.get(1).email());
+    }
+
+    @Test
+    void shouldDeleteWhenIdExists() {
+        when(repository.existsById(5L)).thenReturn(true);
+
+        boolean deleted = service.deleteById(5L);
+
+        assertTrue(deleted);
+        verify(repository).deleteById(5L);
+    }
+
+    @Test
+    void shouldNotDeleteWhenIdMissing() {
+        when(repository.existsById(99L)).thenReturn(false);
+
+        boolean deleted = service.deleteById(99L);
+
+        assertFalse(deleted);
     }
 }
