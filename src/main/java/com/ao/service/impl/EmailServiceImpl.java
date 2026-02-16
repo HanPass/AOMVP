@@ -22,37 +22,24 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.alert.mail.subject-prefix:[AO]}")
     private String subjectPrefix;
 
-<<<<<<< codex/review-application-development-progress-k3ptly
     @Value("${app.alert.mail.enabled:false}")
     private boolean mailEnabled;
 
     @Override
     public void sendAlert(AppelOffre ao, String recipientEmail) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(recipientEmail);
-=======
-    @Override
-    public void sendAlert(String subject, String body) {
-        log.info("EMAIL START");
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(mailTo);
-        if (mailFrom != null && !mailFrom.isBlank()) {
-            message.setFrom(mailFrom);
+        if (ao == null) {
+            log.warn("⚠️ Mail ignoré: AppelOffre null");
+            return;
         }
-        message.setSubject(subjectPrefix + " " + subject);
-        message.setText(body);
 
-        mailSender.send(message);
-        log.info("EMAIL END");
-    }
+        if (recipientEmail == null || recipientEmail.isBlank()) {
+            log.warn("⚠️ Mail ignoré: destinataire vide pour {}", ao.getReference());
+            return;
+        }
 
-    @Override
-    public void sendAlert(AppelOffre ao) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(mailTo);
->>>>>>> main
+            message.setTo(recipientEmail.trim());
             if (mailFrom != null && !mailFrom.isBlank()) {
                 message.setFrom(mailFrom);
             }
@@ -75,7 +62,6 @@ public class EmailServiceImpl implements EmailService {
                     ao.getUrlDetail()
             ));
 
-<<<<<<< codex/review-application-development-progress-k3ptly
             if (!mailEnabled) {
                 log.info("📧 [DISABLED] Mail préparé pour {} ({})", ao.getReference(), recipientEmail);
                 return;
@@ -83,17 +69,9 @@ public class EmailServiceImpl implements EmailService {
 
             mailSender.send(message);
             log.info("📧 Mail envoyé pour {} ({})", ao.getReference(), recipientEmail);
-=======
-            //mailSender.send(message);
-            log.info("📧 Mail préparé pour {}", ao.getReference());
->>>>>>> main
 
         } catch (Exception e) {
             log.error("❌ Erreur envoi mail {} vers {}", ao.getReference(), recipientEmail, e);
         }
     }
-<<<<<<< codex/review-application-development-progress-k3ptly
-=======
-
->>>>>>> main
 }
